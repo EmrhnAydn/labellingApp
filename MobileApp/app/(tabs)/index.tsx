@@ -1,14 +1,12 @@
 /**
  * Labelling App - Home Screen
- * Modern, dynamic home screen with theme toggle and quick actions
+ * Modern home page with Photo and Video selection cards
  */
 
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Text, Dimensions } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StyleSheet, View, Dimensions } from 'react-native';
 import { router } from 'expo-router';
 import Animated, {
-  FadeIn,
   FadeInDown,
   FadeInUp,
   useAnimatedStyle,
@@ -17,150 +15,164 @@ import Animated, {
   withRepeat,
   withSequence,
   withTiming,
-  interpolate,
 } from 'react-native-reanimated';
 import { Colors } from '@/constants/theme';
 import { useTheme } from '@/context/ThemeContext';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { Navbar } from '@/components/Navbar';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { TouchableOpacity } from 'react-native';
 
 const { width } = Dimensions.get('window');
+const CARD_SIZE = (width - 60) / 2; // Equal width and height for square-ish cards
 
 const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
 export default function HomeScreen() {
   const { colorScheme, isDark } = useTheme();
   const colors = Colors[colorScheme];
-  const insets = useSafeAreaInsets();
 
-  // Animation values
-  const pulse = useSharedValue(1);
+  // Animation values for cards
+  const photoScale = useSharedValue(1);
+  const videoScale = useSharedValue(1);
+  const floatValue = useSharedValue(0);
 
   React.useEffect(() => {
-    pulse.value = withRepeat(
+    // Floating animation for icons
+    floatValue.value = withRepeat(
       withSequence(
-        withTiming(1.05, { duration: 1500 }),
-        withTiming(1, { duration: 1500 })
+        withTiming(-5, { duration: 1500 }),
+        withTiming(5, { duration: 1500 })
       ),
       -1,
       true
     );
   }, []);
 
-  const pulseStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: pulse.value }],
+  const floatStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: floatValue.value }],
   }));
 
-  const navigateToCamera = () => {
-    router.push('/(tabs)/camera');
+  const handlePhotoPress = () => {
+    photoScale.value = withSequence(
+      withSpring(0.95, { damping: 10 }),
+      withSpring(1, { damping: 15 })
+    );
+    router.push('/(tabs)/photo');
   };
 
-  return (
-    <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
-      {/* Header */}
-      <Animated.View entering={FadeInDown.delay(100).duration(600)} style={styles.header}>
-        <View>
-          <ThemedText style={[styles.welcomeText, { color: colors.textSecondary }]}>
-            Hoş Geldiniz
-          </ThemedText>
-          <ThemedText type="title" style={styles.appTitle}>
-            Labelling App
-          </ThemedText>
-        </View>
-        <ThemeToggle />
-      </Animated.View>
+  const handleVideoPress = () => {
+    videoScale.value = withSequence(
+      withSpring(0.95, { damping: 10 }),
+      withSpring(1, { damping: 15 })
+    );
+    router.push('/(tabs)/video');
+  };
 
-      {/* Hero Section */}
-      <Animated.View entering={FadeIn.delay(300).duration(800)} style={styles.heroSection}>
-        <Animated.View
-          style={[
-            styles.heroGradient,
-            { backgroundColor: isDark ? colors.primary + '30' : colors.primary + '15' },
-            pulseStyle
-          ]}
-        >
-          <IconSymbol
-            name="tag.fill"
-            size={80}
-            color={colors.primary}
-          />
-        </Animated.View>
-        <ThemedText style={[styles.heroText, { color: colors.textSecondary }]}>
-          Görsellerinizi kolayca etiketleyin
+  const photoAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: photoScale.value }],
+  }));
+
+  const videoAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: videoScale.value }],
+  }));
+
+  return (
+    <ThemedView style={styles.container}>
+      <Navbar showHomeButton={false} />
+
+      {/* Welcome Section */}
+      <Animated.View entering={FadeInDown.delay(300).duration(600)} style={styles.welcomeSection}>
+        <ThemedText style={[styles.welcomeText, { color: colors.textSecondary }]}>
+          Hoş Geldiniz
+        </ThemedText>
+        <ThemedText style={[styles.subtitle, { color: colors.textSecondary }]}>
+          Etiketlemek istediğiniz medya türünü seçin
         </ThemedText>
       </Animated.View>
 
-      {/* Quick Actions */}
-      <View style={styles.actionsContainer}>
-        <Animated.View entering={FadeInUp.delay(500).duration(600)}>
-          <ThemedText type="subtitle" style={styles.sectionTitle}>
-            Hızlı Başla
-          </ThemedText>
+      {/* Cards Container */}
+      <View style={styles.cardsContainer}>
+        {/* Photo Card */}
+        <Animated.View entering={FadeInUp.delay(500).duration(600)} style={photoAnimatedStyle}>
+          <AnimatedTouchable
+            style={[
+              styles.card,
+              {
+                backgroundColor: colors.card,
+                borderColor: colors.border,
+                shadowColor: colors.shadow,
+              },
+            ]}
+            onPress={handlePhotoPress}
+            activeOpacity={0.9}
+          >
+            <Animated.View
+              style={[
+                styles.iconContainer,
+                { backgroundColor: colors.primary + '20' },
+                floatStyle,
+              ]}
+            >
+              <IconSymbol name="camera.fill" size={44} color={colors.primary} />
+            </Animated.View>
+            <ThemedText type="subtitle" style={styles.cardTitle}>
+              Fotoğraf
+            </ThemedText>
+            <ThemedText style={[styles.cardDescription, { color: colors.textSecondary }]}>
+              Fotoğraf çekin veya galeriden seçin
+            </ThemedText>
+            <View style={[styles.cardArrow, { backgroundColor: colors.primary }]}>
+              <IconSymbol name="arrow.right" size={16} color="#FFFFFF" />
+            </View>
+          </AnimatedTouchable>
         </Animated.View>
 
-        <Animated.View entering={FadeInUp.delay(600).duration(600)} style={styles.cardsRow}>
+        {/* Video Card */}
+        <Animated.View entering={FadeInUp.delay(700).duration(600)} style={videoAnimatedStyle}>
           <AnimatedTouchable
             style={[
-              styles.actionCard,
+              styles.card,
               {
                 backgroundColor: colors.card,
                 borderColor: colors.border,
                 shadowColor: colors.shadow,
-              }
+              },
             ]}
-            onPress={navigateToCamera}
-            activeOpacity={0.8}
+            onPress={handleVideoPress}
+            activeOpacity={0.9}
           >
-            <View style={[styles.cardIcon, { backgroundColor: colors.primary + '20' }]}>
-              <IconSymbol name="camera.fill" size={32} color={colors.primary} />
+            <Animated.View
+              style={[
+                styles.iconContainer,
+                { backgroundColor: colors.success + '20' },
+                floatStyle,
+              ]}
+            >
+              <IconSymbol name="video.fill" size={44} color={colors.success} />
+            </Animated.View>
+            <ThemedText type="subtitle" style={styles.cardTitle}>
+              Video
+            </ThemedText>
+            <ThemedText style={[styles.cardDescription, { color: colors.textSecondary }]}>
+              Video kaydedin veya galeriden seçin
+            </ThemedText>
+            <View style={[styles.cardArrow, { backgroundColor: colors.success }]}>
+              <IconSymbol name="arrow.right" size={16} color="#FFFFFF" />
             </View>
-            <ThemedText type="defaultSemiBold" style={styles.cardTitle}>
-              Fotoğraf Çek
-            </ThemedText>
-            <ThemedText style={[styles.cardDesc, { color: colors.textSecondary }]}>
-              Kamera ile yeni görsel
-            </ThemedText>
-          </AnimatedTouchable>
-
-          <AnimatedTouchable
-            style={[
-              styles.actionCard,
-              {
-                backgroundColor: colors.card,
-                borderColor: colors.border,
-                shadowColor: colors.shadow,
-              }
-            ]}
-            onPress={navigateToCamera}
-            activeOpacity={0.8}
-          >
-            <View style={[styles.cardIcon, { backgroundColor: colors.success + '20' }]}>
-              <IconSymbol name="photo.fill" size={32} color={colors.success} />
-            </View>
-            <ThemedText type="defaultSemiBold" style={styles.cardTitle}>
-              Galeriden Seç
-            </ThemedText>
-            <ThemedText style={[styles.cardDesc, { color: colors.textSecondary }]}>
-              Mevcut görselleri aç
-            </ThemedText>
           </AnimatedTouchable>
         </Animated.View>
       </View>
 
-      {/* Theme Info */}
+      {/* Bottom Info */}
       <Animated.View
-        entering={FadeInUp.delay(800).duration(600)}
-        style={[styles.themeInfo, { backgroundColor: colors.backgroundSecondary, borderColor: colors.border }]}
+        entering={FadeInUp.delay(900).duration(600)}
+        style={[styles.infoContainer, { backgroundColor: colors.backgroundSecondary, borderColor: colors.border }]}
       >
-        <IconSymbol
-          name={isDark ? 'moon.fill' : 'sun.max.fill'}
-          size={20}
-          color={isDark ? '#FBBF24' : '#F59E0B'}
-        />
-        <ThemedText style={[styles.themeInfoText, { color: colors.textSecondary }]}>
-          {isDark ? 'Karanlık mod aktif' : 'Aydınlık mod aktif'} - Sağ üstten değiştir
+        <IconSymbol name="info.circle.fill" size={20} color={colors.primary} />
+        <ThemedText style={[styles.infoText, { color: colors.textSecondary }]}>
+          Seçiminize göre ilgili izinler talep edilecektir
         </ThemedText>
       </Animated.View>
     </ThemedView>
@@ -171,85 +183,77 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+  welcomeSection: {
     paddingHorizontal: 24,
-    paddingVertical: 20,
+    paddingTop: 32,
+    paddingBottom: 24,
   },
   welcomeText: {
-    fontSize: 14,
-    marginBottom: 4,
+    fontSize: 28,
+    fontWeight: '700',
+    marginBottom: 8,
   },
-  appTitle: {
-    fontSize: 32,
-    fontWeight: '800',
+  subtitle: {
+    fontSize: 15,
   },
-  heroSection: {
-    alignItems: 'center',
-    paddingVertical: 40,
-  },
-  heroGradient: {
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  heroText: {
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  actionsContainer: {
-    flex: 1,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    marginBottom: 16,
-  },
-  cardsRow: {
+  cardsContainer: {
     flexDirection: 'row',
+    paddingHorizontal: 20,
     gap: 16,
+    justifyContent: 'center',
   },
-  actionCard: {
-    flex: 1,
-    borderRadius: 20,
+  card: {
+    width: CARD_SIZE,
+    minHeight: CARD_SIZE + 40,
+    borderRadius: 24,
     padding: 20,
     borderWidth: 1,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  cardIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
+  iconContainer: {
+    width: 88,
+    height: 88,
+    borderRadius: 44,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
   },
   cardTitle: {
-    fontSize: 16,
-    marginBottom: 4,
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 8,
+    textAlign: 'center',
   },
-  cardDesc: {
-    fontSize: 13,
+  cardDescription: {
+    fontSize: 12,
+    textAlign: 'center',
+    lineHeight: 18,
+    marginBottom: 16,
   },
-  themeInfo: {
+  cardArrow: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  infoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    marginHorizontal: 24,
-    marginBottom: 24,
+    gap: 12,
+    marginHorizontal: 20,
+    marginTop: 32,
     padding: 16,
     borderRadius: 16,
     borderWidth: 1,
   },
-  themeInfoText: {
-    fontSize: 14,
+  infoText: {
+    fontSize: 13,
     flex: 1,
   },
 });
