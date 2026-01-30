@@ -25,6 +25,7 @@ import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import { Navbar } from '@/components/Navbar';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { CustomIcon } from '@/components/CustomIcon';
 import { usePermissions } from '@/hooks/usePermissions';
 
 const { width, height } = Dimensions.get('window');
@@ -121,13 +122,13 @@ export default function PhotoScreen() {
                                 style={[styles.cameraButton, { backgroundColor: 'rgba(0,0,0,0.5)' }]}
                                 onPress={handleBack}
                             >
-                                <IconSymbol name="xmark" size={24} color="#FFFFFF" />
+                                <CustomIcon name="back" size={24} color="#FFFFFF" />
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={[styles.cameraButton, { backgroundColor: 'rgba(0,0,0,0.5)' }]}
                                 onPress={handleFlipCamera}
                             >
-                                <IconSymbol name="camera.rotate.fill" size={24} color="#FFFFFF" />
+                                <CustomIcon name="camera-rotate" size={24} color="#FFFFFF" />
                             </TouchableOpacity>
                         </Animated.View>
 
@@ -208,7 +209,7 @@ export default function PhotoScreen() {
                         activeOpacity={0.9}
                     >
                         <View style={[styles.optionIcon, { backgroundColor: colors.primary + '20' }]}>
-                            <IconSymbol name="camera.fill" size={40} color={colors.primary} />
+                            <CustomIcon name="camera" size={40} color={colors.primary} />
                         </View>
                         <ThemedText type="subtitle" style={styles.optionTitle}>
                             Kamera
@@ -248,7 +249,7 @@ export default function PhotoScreen() {
                         activeOpacity={0.9}
                     >
                         <View style={[styles.optionIcon, { backgroundColor: colors.success + '20' }]}>
-                            <IconSymbol name="photo.fill.on.rectangle.fill" size={40} color={colors.success} />
+                            <CustomIcon name="gallery" size={40} color={colors.success} />
                         </View>
                         <ThemedText type="subtitle" style={styles.optionTitle}>
                             Galeri

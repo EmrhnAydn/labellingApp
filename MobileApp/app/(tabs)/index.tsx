@@ -18,10 +18,12 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Colors } from '@/constants/theme';
 import { useTheme } from '@/context/ThemeContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import { Navbar } from '@/components/Navbar';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { CustomIcon } from '@/components/CustomIcon';
 import { TouchableOpacity } from 'react-native';
 
 const { width } = Dimensions.get('window');
@@ -31,6 +33,7 @@ const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
 export default function HomeScreen() {
   const { colorScheme, isDark } = useTheme();
+  const { t } = useLanguage();
   const colors = Colors[colorScheme];
 
   // Animation values for cards
@@ -85,10 +88,10 @@ export default function HomeScreen() {
       {/* Welcome Section */}
       <Animated.View entering={FadeInDown.delay(300).duration(600)} style={styles.welcomeSection}>
         <ThemedText style={[styles.welcomeText, { color: colors.textSecondary }]}>
-          Hoş Geldiniz
+          {t('welcome')}
         </ThemedText>
         <ThemedText style={[styles.subtitle, { color: colors.textSecondary }]}>
-          Etiketlemek istediğiniz medya türünü seçin
+          {t('selectMedia')}
         </ThemedText>
       </Animated.View>
 
@@ -115,13 +118,13 @@ export default function HomeScreen() {
                 floatStyle,
               ]}
             >
-              <IconSymbol name="camera.fill" size={44} color={colors.primary} />
+              <CustomIcon name="photo" size={44} color={colors.primary} />
             </Animated.View>
             <ThemedText type="subtitle" style={styles.cardTitle}>
-              Fotoğraf
+              {t('photo')}
             </ThemedText>
             <ThemedText style={[styles.cardDescription, { color: colors.textSecondary }]}>
-              Fotoğraf çekin veya galeriden seçin
+              {t('photoDescription')}
             </ThemedText>
             <View style={[styles.cardArrow, { backgroundColor: colors.primary }]}>
               <IconSymbol name="arrow.right" size={16} color="#FFFFFF" />
@@ -150,13 +153,13 @@ export default function HomeScreen() {
                 floatStyle,
               ]}
             >
-              <IconSymbol name="video.fill" size={44} color={colors.success} />
+              <CustomIcon name="video" size={44} color={colors.success} />
             </Animated.View>
             <ThemedText type="subtitle" style={styles.cardTitle}>
-              Video
+              {t('video')}
             </ThemedText>
             <ThemedText style={[styles.cardDescription, { color: colors.textSecondary }]}>
-              Video kaydedin veya galeriden seçin
+              {t('videoDescription')}
             </ThemedText>
             <View style={[styles.cardArrow, { backgroundColor: colors.success }]}>
               <IconSymbol name="arrow.right" size={16} color="#FFFFFF" />
@@ -172,7 +175,7 @@ export default function HomeScreen() {
       >
         <IconSymbol name="info.circle.fill" size={20} color={colors.primary} />
         <ThemedText style={[styles.infoText, { color: colors.textSecondary }]}>
-          Seçiminize göre ilgili izinler talep edilecektir
+          {t('permissionInfo')}
         </ThemedText>
       </Animated.View>
     </ThemedView>

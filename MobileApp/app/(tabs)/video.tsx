@@ -26,6 +26,7 @@ import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import { Navbar } from '@/components/Navbar';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { CustomIcon } from '@/components/CustomIcon';
 import { usePermissions } from '@/hooks/usePermissions';
 
 const { width, height } = Dimensions.get('window');
@@ -153,14 +154,14 @@ export default function VideoScreen() {
                                 onPress={handleBack}
                                 disabled={isRecording}
                             >
-                                <IconSymbol name="xmark" size={24} color="#FFFFFF" />
+                                <CustomIcon name="back" size={24} color="#FFFFFF" />
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={[styles.cameraButton, { backgroundColor: 'rgba(0,0,0,0.5)' }]}
                                 onPress={handleFlipCamera}
                                 disabled={isRecording}
                             >
-                                <IconSymbol name="camera.rotate.fill" size={24} color="#FFFFFF" />
+                                <CustomIcon name="camera-rotate" size={24} color="#FFFFFF" />
                             </TouchableOpacity>
                         </Animated.View>
 
@@ -258,7 +259,7 @@ export default function VideoScreen() {
                         activeOpacity={0.9}
                     >
                         <View style={[styles.optionIcon, { backgroundColor: colors.error + '20' }]}>
-                            <IconSymbol name="video.fill" size={40} color={colors.error} />
+                            <CustomIcon name="video" size={40} color={colors.error} />
                         </View>
                         <ThemedText type="subtitle" style={styles.optionTitle}>
                             Kamera
@@ -298,7 +299,7 @@ export default function VideoScreen() {
                         activeOpacity={0.9}
                     >
                         <View style={[styles.optionIcon, { backgroundColor: colors.primary + '20' }]}>
-                            <IconSymbol name="film.fill" size={40} color={colors.primary} />
+                            <CustomIcon name="gallery" size={40} color={colors.primary} />
                         </View>
                         <ThemedText type="subtitle" style={styles.optionTitle}>
                             Galeri

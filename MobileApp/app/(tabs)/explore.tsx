@@ -8,6 +8,7 @@ import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '@/constants/theme';
 import { useTheme } from '@/context/ThemeContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -15,13 +16,14 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 
 export default function ExploreScreen() {
   const { colorScheme } = useTheme();
+  const { t } = useLanguage();
   const colors = Colors[colorScheme];
   const insets = useSafeAreaInsets();
 
   return (
     <ThemedView style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
-        <ThemedText type="title">Ayarlar</ThemedText>
+        <ThemedText type="title">{t('settingsTitle')}</ThemedText>
         <ThemeToggle />
       </View>
 
@@ -29,7 +31,7 @@ export default function ExploreScreen() {
         <View style={[styles.placeholder, { backgroundColor: colors.backgroundSecondary }]}>
           <IconSymbol name="gear" size={48} color={colors.textSecondary} />
           <ThemedText style={[styles.placeholderText, { color: colors.textSecondary }]}>
-            Ayarlar yakında eklenecek
+            {t('settingsComingSoon')}
           </ThemedText>
         </View>
       </View>

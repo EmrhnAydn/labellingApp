@@ -1,101 +1,104 @@
 /**
  * Navbar Component
- * Top navigation bar with branding, theme toggle, and home button
+ * Top navigation bar with branding (home link), and hamburger menu
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, usePathname } from 'expo-router';
 import Animated, {
-    FadeIn,
     FadeInLeft,
     FadeInRight,
 } from 'react-native-reanimated';
 import { Colors } from '@/constants/theme';
 import { useTheme } from '@/context/ThemeContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { ThemedText } from '@/components/themed-text';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-
-const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
+import { SettingsMenu } from '@/components/SettingsMenu';
 
 interface NavbarProps {
     showHomeButton?: boolean;
 }
 
 export function Navbar({ showHomeButton = true }: NavbarProps) {
-    const { colorScheme, isDark, toggleTheme } = useTheme();
+    const { colorScheme } = useTheme();
+    const { t } = useLanguage();
     const colors = Colors[colorScheme];
     const insets = useSafeAreaInsets();
     const pathname = usePathname();
+    const [menuVisible, setMenuVisible] = useState(false);
 
     const isHome = pathname === '/' || pathname === '/index';
 
-    const handleHomePress = () => {
-        router.push('/');
+    const handleBrandPress = () => {
+        if (!isHome) {
+            router.push('/');
+        }
+    };
+
+    const handleMenuPress = () => {
+        setMenuVisible(true);
+    };
+
+    const handleMenuClose = () => {
+        setMenuVisible(false);
     };
 
     return (
-        <View
-            style={[
-                styles.container,
-                {
-                    paddingTop: insets.top + 8,
-                    backgroundColor: colors.background,
-                    borderBottomColor: colors.border,
-                },
-            ]}
-        >
-            {/* Left Section - Branding */}
-            <Animated.View entering={FadeInLeft.delay(100).duration(500)} style={styles.brandingSection}>
-                <ThemedText style={[styles.appTitle, { color: colors.text }]}>
-                    Labelling App
-                </ThemedText>
-                <ThemedText style={[styles.developerText, { color: colors.textSecondary }]}>
-                    developed by Emirhan Aydın
-                </ThemedText>
-            </Animated.View>
-
-            {/* Right Section - Controls */}
-            <Animated.View entering={FadeInRight.delay(200).duration(500)} style={styles.controlsSection}>
-                {/* Theme Toggle */}
-                <AnimatedTouchable
-                    onPress={toggleTheme}
-                    style={[
-                        styles.iconButton,
-                        {
-                            backgroundColor: colors.card,
-                            borderColor: colors.border,
-                        },
-                    ]}
-                    activeOpacity={0.7}
+        <>
+            <View
+                style={[
+                    styles.container,
+                    {
+                        paddingTop: insets.top + 8,
+                        backgroundColor: colors.background,
+                        borderBottomColor: colors.border,
+                    },
+                ]}
+            >
+                {/* Left Section - Branding (acts as home button) */}
+                <TouchableOpacity
+                    onPress={handleBrandPress}
+                    activeOpacity={isHome ? 1 : 0.7}
+                    disabled={isHome}
                 >
-                    <IconSymbol
-                        name={isDark ? 'moon.fill' : 'sun.max.fill'}
-                        size={22}
-                        color={isDark ? '#FBBF24' : '#F59E0B'}
-                    />
-                </AnimatedTouchable>
+                    <Animated.View entering={FadeInLeft.delay(100).duration(500)} style={styles.brandingSection}>
+                        <ThemedText style={[styles.appTitle, { color: colors.text }]}>
+                            {t('appTitle')}
+                        </ThemedText>
+                        <ThemedText style={[styles.developerText, { color: colors.textSecondary }]}>
+                            {t('developer')}
+                        </ThemedText>
+                    </Animated.View>
+                </TouchableOpacity>
 
-                {/* Home Button - Show only if not on home and showHomeButton is true */}
-                {showHomeButton && !isHome && (
-                    <AnimatedTouchable
-                        entering={FadeIn.duration(300)}
-                        onPress={handleHomePress}
+                {/* Right Section - Hamburger Menu */}
+                <Animated.View entering={FadeInRight.delay(200).duration(500)} style={styles.controlsSection}>
+                    <TouchableOpacity
+                        onPress={handleMenuPress}
                         style={[
-                            styles.iconButton,
+                            styles.menuButton,
                             {
-                                backgroundColor: colors.primary,
-                                borderColor: colors.primary,
+                                backgroundColor: colors.card,
+                                borderColor: colors.border,
                             },
                         ]}
                         activeOpacity={0.7}
                     >
-                        <IconSymbol name="house.fill" size={22} color="#FFFFFF" />
-                    </AnimatedTouchable>
-                )}
-            </Animated.View>
-        </View>
+                        <View style={styles.hamburgerIcon}>
+                            <View style={[styles.hamburgerLine, { backgroundColor: colors.text }]} />
+                            <View style={[styles.hamburgerLine, { backgroundColor: colors.text }]} />
+                            <View style={[styles.hamburgerLine, { backgroundColor: colors.text }]} />
+                        </View>
+                    </TouchableOpacity>
+                </Animated.View>
+            </View>
+
+            {/* Settings Menu Overlay */}
+            <SettingsMenu visible={menuVisible} onClose={handleMenuClose} />
+        </>
     );
 }
 
@@ -125,9 +128,8 @@ const styles = StyleSheet.create({
     controlsSection: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 10,
     },
-    iconButton: {
+    menuButton: {
         width: 44,
         height: 44,
         borderRadius: 22,
@@ -138,5 +140,15 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
+    },
+    hamburgerIcon: {
+        width: 20,
+        height: 14,
+        justifyContent: 'space-between',
+    },
+    hamburgerLine: {
+        width: 20,
+        height: 2,
+        borderRadius: 1,
     },
 });
