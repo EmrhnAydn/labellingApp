@@ -64,6 +64,9 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "moondreamApiKey": "${MOONDREAM_API_KEY}"
     }
   }
 }

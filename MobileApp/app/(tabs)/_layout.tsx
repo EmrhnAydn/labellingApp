@@ -21,6 +21,7 @@ export default function TabLayout() {
       <Stack.Screen name="photo" />
       <Stack.Screen name="video" />
       <Stack.Screen name="camera" options={{ headerShown: false }} />
+      <Stack.Screen name="analysis" options={{ headerShown: false }} />
       <Stack.Screen name="explore" options={{ headerShown: false }} />
     </Stack>
   );

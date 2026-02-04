@@ -5,6 +5,7 @@
 
 import React, { useState, useRef } from 'react';
 import { StyleSheet, View, TouchableOpacity, Dimensions, Image } from 'react-native';
+import { router } from 'expo-router';
 import { CameraView, CameraType } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import Animated, {
@@ -165,7 +166,7 @@ export default function PhotoScreen() {
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={[styles.previewButton, { backgroundColor: colors.success }]}
-                                onPress={() => {/* TODO: Process image */ }}
+                                onPress={() => router.push({ pathname: '/(tabs)/analysis', params: { imageUri: selectedImage } })}
                             >
                                 <IconSymbol name="checkmark" size={20} color="#FFFFFF" />
                                 <ThemedText style={styles.previewButtonText}>Devam Et</ThemedText>
