@@ -66,18 +66,50 @@ export default function AnalysisScreen() {
     const [inputText, setInputText] = useState('');
     const [captionLength, setCaptionLength] = useState<CaptionLength>('normal');
     const [imageDimensions, setImageDimensions] = useState({ width: IMAGE_WIDTH, height: IMAGE_HEIGHT });
+    const [imageAspectRatio, setImageAspectRatio] = useState(1);
 
     // Get image dimensions for overlay calculations
     useEffect(() => {
         if (imageUri) {
             Image.getSize(imageUri, (w, h) => {
                 const aspectRatio = w / h;
+                setImageAspectRatio(aspectRatio);
                 const displayWidth = IMAGE_WIDTH;
                 const displayHeight = displayWidth / aspectRatio;
                 setImageDimensions({ width: displayWidth, height: Math.min(displayHeight, IMAGE_HEIGHT) });
             });
         }
     }, [imageUri]);
+
+    // Calculate actual rendered image layout within container (accounting for resizeMode="contain")
+    const getRenderedImageLayout = () => {
+        const containerWidth = imageDimensions.width;
+        const containerHeight = imageDimensions.height;
+        const containerAspectRatio = containerWidth / containerHeight;
+
+        let renderWidth, renderHeight, offsetX, offsetY;
+
+        if (containerAspectRatio > imageAspectRatio) {
+            // Container is wider than image - pillarboxing (vertical image in landscape container)
+            renderHeight = containerHeight;
+            renderWidth = containerHeight * imageAspectRatio;
+            offsetX = (containerWidth - renderWidth) / 2;
+            offsetY = 0;
+        } else {
+            // Container is taller than image - letterboxing (horizontal image in portrait container)
+            renderWidth = containerWidth;
+            renderHeight = containerWidth / imageAspectRatio;
+            offsetX = 0;
+            offsetY = (containerHeight - renderHeight) / 2;
+        }
+
+        return {
+            x: offsetX,
+            y: offsetY,
+            width: renderWidth,
+            height: renderHeight,
+        };
+    };
 
     // Clear results when mode changes
     useEffect(() => {
@@ -279,12 +311,15 @@ export default function AnalysisScreen() {
     };
 
     const renderOverlays = () => {
+        const imageLayout = getRenderedImageLayout();
+
         if (result.objects && result.objects.length > 0) {
             return (
                 <BoundingBoxOverlay
                     boxes={result.objects}
                     imageWidth={imageDimensions.width}
                     imageHeight={imageDimensions.height}
+                    imageLayout={imageLayout}
                     objectName={inputText}
                 />
             );
@@ -296,6 +331,7 @@ export default function AnalysisScreen() {
                     points={result.points}
                     imageWidth={imageDimensions.width}
                     imageHeight={imageDimensions.height}
+                    imageLayout={imageLayout}
                 />
             );
         }
@@ -307,6 +343,7 @@ export default function AnalysisScreen() {
                     bbox={result.segment.bbox}
                     imageWidth={imageDimensions.width}
                     imageHeight={imageDimensions.height}
+                    imageLayout={imageLayout}
                 />
             );
         }

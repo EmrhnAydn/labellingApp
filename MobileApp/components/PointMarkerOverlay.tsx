@@ -15,6 +15,12 @@ interface PointMarkerOverlayProps {
     points: Point[];
     imageWidth: number;
     imageHeight: number;
+    imageLayout: {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+    };
 }
 
 // Color palette for point markers
@@ -35,6 +41,7 @@ export function PointMarkerOverlay({
     points,
     imageWidth,
     imageHeight,
+    imageLayout,
 }: PointMarkerOverlayProps) {
     const { colorScheme } = useTheme();
     const colors = Colors[colorScheme];
@@ -46,9 +53,9 @@ export function PointMarkerOverlay({
     return (
         <View style={[styles.container, { width: imageWidth, height: imageHeight }]}>
             {points.map((point, index) => {
-                // Convert normalized coordinates (0-1) to pixel coordinates
-                const left = point.x * imageWidth - MARKER_SIZE / 2;
-                const top = point.y * imageHeight - MARKER_SIZE / 2;
+                // Convert normalized coordinates (0-1) to pixel coordinates using imageLayout
+                const left = imageLayout.x + point.x * imageLayout.width - MARKER_SIZE / 2;
+                const top = imageLayout.y + point.y * imageLayout.height - MARKER_SIZE / 2;
                 const markerColor = POINT_COLORS[index % POINT_COLORS.length];
 
                 return (

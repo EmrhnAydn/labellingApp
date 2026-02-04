@@ -15,6 +15,12 @@ interface BoundingBoxOverlayProps {
     boxes: Region[];
     imageWidth: number;
     imageHeight: number;
+    imageLayout: {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+    };
     objectName?: string;
 }
 
@@ -34,6 +40,7 @@ export function BoundingBoxOverlay({
     boxes,
     imageWidth,
     imageHeight,
+    imageLayout,
     objectName,
 }: BoundingBoxOverlayProps) {
     const { colorScheme } = useTheme();
@@ -46,11 +53,11 @@ export function BoundingBoxOverlay({
     return (
         <View style={[styles.container, { width: imageWidth, height: imageHeight }]}>
             {boxes.map((box, index) => {
-                // Convert normalized coordinates (0-1) to pixel coordinates
-                const left = box.x_min * imageWidth;
-                const top = box.y_min * imageHeight;
-                const width = (box.x_max - box.x_min) * imageWidth;
-                const height = (box.y_max - box.y_min) * imageHeight;
+                // Convert normalized coordinates (0-1) to pixel coordinates using imageLayout
+                const left = imageLayout.x + box.x_min * imageLayout.width;
+                const top = imageLayout.y + box.y_min * imageLayout.height;
+                const width = (box.x_max - box.x_min) * imageLayout.width;
+                const height = (box.y_max - box.y_min) * imageLayout.height;
                 const boxColor = BOX_COLORS[index % BOX_COLORS.length];
 
                 return (
