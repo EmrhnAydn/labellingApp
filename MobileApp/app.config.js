@@ -2,8 +2,9 @@ import 'dotenv/config';
 
 export default {
     expo: {
+        owner: "byrkhns-organization",
         name: "MobileApp",
-        slug: "MobileApp",
+        slug: "labellingapp",
         version: "1.0.0",
         orientation: "portrait",
         icon: "./assets/images/icon.png",
@@ -18,6 +19,7 @@ export default {
             }
         },
         android: {
+            package: "com.byrkhns.labellingapp",
             adaptiveIcon: {
                 backgroundColor: "#E6F4FE",
                 foregroundImage: "./assets/images/android-icon-foreground.png",
@@ -68,7 +70,11 @@ export default {
             reactCompiler: true
         },
         extra: {
-            moondreamApiKey: process.env.MOONDREAM_API_KEY
+            moondreamApiKey: process.env.MOONDREAM_API_KEY,
+            eas: {
+                projectId: "b3c63914-c4e7-4bdb-b327-41621fd71040",
+                owner: "byrkhns-organization"
+            }
         }
     }
 };

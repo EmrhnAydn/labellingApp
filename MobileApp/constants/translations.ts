@@ -95,6 +95,12 @@ export const translations = {
         deleteKey: 'Delete',
         selectKey: 'Select',
         apiKeyRequired: 'API key required for analysis',
+
+        // Source Code & Developer Info
+        sourceCode: 'Source Code',
+        developerInfo: 'Developer Information',
+        portfolio: 'Portfolio',
+        githubProfile: 'GitHub Profile',
     },
     tr: {
         // Navbar
@@ -185,6 +191,12 @@ export const translations = {
         deleteKey: 'Sil',
         selectKey: 'Seç',
         apiKeyRequired: 'Analiz için API anahtarı gerekli',
+
+        // Source Code & Developer Info
+        sourceCode: 'Kaynak Kod',
+        developerInfo: 'Geliştirici Bilgisi',
+        portfolio: 'Portfolyo',
+        githubProfile: 'GitHub Profili',
     },
 } as const;
 

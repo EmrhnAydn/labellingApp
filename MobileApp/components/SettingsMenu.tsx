@@ -10,6 +10,7 @@ import {
     TouchableOpacity,
     Pressable,
     Dimensions,
+    Linking,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
@@ -194,6 +195,68 @@ export function SettingsMenu({ visible, onClose }: SettingsMenuProps) {
                         {language === 'en' ? 'Switch to Turkish' : 'İngilizce\'ye geç'}
                     </ThemedText>
                 </View>
+
+                {/* Source Code Section */}
+                <TouchableOpacity
+                    onPress={() => Linking.openURL('https://github.com/EmrhnAydn/labellingApp')}
+                    style={[
+                        styles.sourceCodeCard,
+                        {
+                            backgroundColor: colors.backgroundSecondary,
+                            borderColor: colors.border,
+                        },
+                    ]}
+                    activeOpacity={0.7}
+                >
+                    <View style={styles.sourceCodeContent}>
+                        <View style={[styles.githubIconContainer, { backgroundColor: isDark ? '#FFFFFF' : '#24292e' }]}>
+                            <ThemedText style={{ color: isDark ? '#24292e' : '#FFFFFF', fontSize: 18, fontWeight: '700' }}>
+                                ⟠
+                            </ThemedText>
+                        </View>
+                        <ThemedText style={[styles.sourceCodeText, { color: colors.text }]}>
+                            {t('sourceCode')}
+                        </ThemedText>
+                    </View>
+                    <IconSymbol name="chevron.right" size={16} color={colors.textSecondary} />
+                </TouchableOpacity>
+
+                {/* Developer Info Section */}
+                <View style={[styles.developerCard, { backgroundColor: colors.backgroundSecondary, borderColor: colors.border }]}>
+                    <View style={styles.developerHeader}>
+                        <IconSymbol name="person.fill" size={20} color={colors.primary} />
+                        <ThemedText style={[styles.sectionTitle, { color: colors.text }]}>
+                            {t('developerInfo')}
+                        </ThemedText>
+                    </View>
+                    <ThemedText style={[styles.developerName, { color: colors.text }]}>
+                        Emirhan Aydın
+                    </ThemedText>
+                    <View style={styles.developerButtons}>
+                        <TouchableOpacity
+                            onPress={() => Linking.openURL('https://emrhnaydn.github.io/emirhanAydinPortfolio/')}
+                            style={[styles.developerButton, { backgroundColor: colors.primary }]}
+                            activeOpacity={0.8}
+                        >
+                            <IconSymbol name="globe" size={16} color="#FFFFFF" />
+                            <ThemedText style={styles.developerButtonText}>
+                                {t('portfolio')}
+                            </ThemedText>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => Linking.openURL('https://github.com/EmrhnAydn')}
+                            style={[styles.developerButton, { backgroundColor: isDark ? '#FFFFFF' : '#24292e' }]}
+                            activeOpacity={0.8}
+                        >
+                            <ThemedText style={{ color: isDark ? '#24292e' : '#FFFFFF', fontSize: 14, fontWeight: '600' }}>
+                                ⟠
+                            </ThemedText>
+                            <ThemedText style={[styles.developerButtonText, { color: isDark ? '#24292e' : '#FFFFFF' }]}>
+                                {t('githubProfile')}
+                            </ThemedText>
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </Animated.View>
         </View>
     );
@@ -303,5 +366,67 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 12,
         fontSize: 13,
+    },
+    sourceCodeCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: 16,
+        borderRadius: 16,
+        borderWidth: 1,
+        marginTop: 24,
+    },
+    sourceCodeContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+    },
+    githubIconContainer: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    sourceCodeText: {
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    developerCard: {
+        padding: 16,
+        borderRadius: 16,
+        borderWidth: 1,
+        marginTop: 16,
+        marginBottom: 24,
+    },
+    developerHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+        marginBottom: 12,
+    },
+    developerName: {
+        fontSize: 18,
+        fontWeight: '700',
+        textAlign: 'center',
+        marginBottom: 16,
+    },
+    developerButtons: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        gap: 12,
+    },
+    developerButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        borderRadius: 12,
+    },
+    developerButtonText: {
+        color: '#FFFFFF',
+        fontSize: 14,
+        fontWeight: '600',
     },
 });
