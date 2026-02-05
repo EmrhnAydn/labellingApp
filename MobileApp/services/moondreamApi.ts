@@ -79,12 +79,16 @@ async function imageToBase64(imageUri: string): Promise<string> {
 
 /**
  * Make API request to Moondream Cloud
+ * @param endpoint - API endpoint
+ * @param body - Request body
+ * @param customApiKey - Optional API key (if not provided, uses environment key)
  */
 async function apiRequest<T>(
     endpoint: string,
-    body: Record<string, unknown>
+    body: Record<string, unknown>,
+    customApiKey?: string
 ): Promise<T> {
-    const apiKey = getApiKey();
+    const apiKey = customApiKey || getApiKey();
 
     if (!apiKey || apiKey === 'your_api_key_here') {
         throw new Error('MOONDREAM_API_KEY is not configured. Please add your API key.');

@@ -5,6 +5,7 @@ import 'react-native-reanimated';
 
 import { ThemeProvider, useTheme } from '@/context/ThemeContext';
 import { LanguageProvider } from '@/context/LanguageContext';
+import { ApiKeyProvider } from '@/context/ApiKeyContext';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -28,7 +29,9 @@ export default function RootLayout() {
   return (
     <ThemeProvider>
       <LanguageProvider>
-        <RootLayoutContent />
+        <ApiKeyProvider>
+          <RootLayoutContent />
+        </ApiKeyProvider>
       </LanguageProvider>
     </ThemeProvider>
   );

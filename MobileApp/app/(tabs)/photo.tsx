@@ -22,6 +22,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Colors } from '@/constants/theme';
 import { useTheme } from '@/context/ThemeContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import { Navbar } from '@/components/Navbar';
@@ -38,6 +39,7 @@ type ViewMode = 'selection' | 'camera' | 'preview';
 
 export default function PhotoScreen() {
     const { colorScheme, isDark } = useTheme();
+    const { t } = useLanguage();
     const colors = Colors[colorScheme];
     const { permissions, requestCameraPermission, requestMediaLibraryPermission } = usePermissions();
 
@@ -162,14 +164,14 @@ export default function PhotoScreen() {
                                 onPress={handleBack}
                             >
                                 <IconSymbol name="trash.fill" size={20} color="#FFFFFF" />
-                                <ThemedText style={styles.previewButtonText}>İptal</ThemedText>
+                                <ThemedText style={styles.previewButtonText}>{t('cancel')}</ThemedText>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={[styles.previewButton, { backgroundColor: colors.success }]}
                                 onPress={() => router.push({ pathname: '/(tabs)/analysis', params: { imageUri: selectedImage } })}
                             >
                                 <IconSymbol name="checkmark" size={20} color="#FFFFFF" />
-                                <ThemedText style={styles.previewButtonText}>Devam Et</ThemedText>
+                                <ThemedText style={styles.previewButtonText}>{t('continueText')}</ThemedText>
                             </TouchableOpacity>
                         </Animated.View>
                     </View>
@@ -186,37 +188,38 @@ export default function PhotoScreen() {
             {/* Title Section */}
             <Animated.View entering={FadeInDown.delay(200).duration(500)} style={styles.titleSection}>
                 <ThemedText type="title" style={styles.pageTitle}>
-                    Fotoğraf
+                    {t('photoPageTitle')}
                 </ThemedText>
                 <ThemedText style={[styles.pageSubtitle, { color: colors.textSecondary }]}>
-                    Fotoğraf çekmek veya galeriden seçmek için bir seçenek belirleyin
+                    {t('photoPageSubtitle')}
                 </ThemedText>
             </Animated.View>
 
             {/* Options Cards */}
             <View style={styles.cardsContainer}>
                 {/* Camera Card */}
-                <Animated.View entering={FadeInUp.delay(400).duration(500)} style={cameraAnimatedStyle}>
+                <Animated.View entering={FadeInUp.delay(400).duration(500)} style={[cameraAnimatedStyle, styles.cardWrapper]}>
                     <AnimatedTouchable
                         style={[
                             styles.optionCard,
                             {
-                                backgroundColor: colors.card,
-                                borderColor: colors.border,
-                                shadowColor: colors.shadow,
+                                backgroundColor: isDark ? colors.card : '#FFFFFF',
+                                borderColor: isDark ? colors.border : colors.primary + '30',
+                                shadowColor: colors.primary,
                             },
                         ]}
                         onPress={handleCameraPress}
                         activeOpacity={0.9}
                     >
+                        <View style={[styles.iconGlow, { backgroundColor: colors.primary + '15' }]} />
                         <View style={[styles.optionIcon, { backgroundColor: colors.primary + '20' }]}>
                             <CustomIcon name="camera" size={40} color={colors.primary} />
                         </View>
                         <ThemedText type="subtitle" style={styles.optionTitle}>
-                            Kamera
+                            {t('camera')}
                         </ThemedText>
                         <ThemedText style={[styles.optionDescription, { color: colors.textSecondary }]}>
-                            Yeni fotoğraf çekin
+                            {t('cameraDescription')}
                         </ThemedText>
                         <View style={[styles.permissionBadge, {
                             backgroundColor: permissions.camera === 'granted' ? colors.success + '20' : colors.warning + '20'
@@ -229,34 +232,35 @@ export default function PhotoScreen() {
                             <ThemedText style={[styles.permissionText, {
                                 color: permissions.camera === 'granted' ? colors.success : colors.warning
                             }]}>
-                                {permissions.camera === 'granted' ? 'İzin verildi' : 'İzin gerekli'}
+                                {permissions.camera === 'granted' ? t('permissionGranted') : t('permissionRequired')}
                             </ThemedText>
                         </View>
                     </AnimatedTouchable>
                 </Animated.View>
 
                 {/* Gallery Card */}
-                <Animated.View entering={FadeInUp.delay(600).duration(500)} style={galleryAnimatedStyle}>
+                <Animated.View entering={FadeInUp.delay(600).duration(500)} style={[galleryAnimatedStyle, styles.cardWrapper]}>
                     <AnimatedTouchable
                         style={[
                             styles.optionCard,
                             {
-                                backgroundColor: colors.card,
-                                borderColor: colors.border,
-                                shadowColor: colors.shadow,
+                                backgroundColor: isDark ? colors.card : '#FFFFFF',
+                                borderColor: isDark ? colors.border : colors.success + '30',
+                                shadowColor: colors.success,
                             },
                         ]}
                         onPress={handleGalleryPress}
                         activeOpacity={0.9}
                     >
+                        <View style={[styles.iconGlow, { backgroundColor: colors.success + '15' }]} />
                         <View style={[styles.optionIcon, { backgroundColor: colors.success + '20' }]}>
                             <CustomIcon name="gallery" size={40} color={colors.success} />
                         </View>
                         <ThemedText type="subtitle" style={styles.optionTitle}>
-                            Galeri
+                            {t('gallery')}
                         </ThemedText>
                         <ThemedText style={[styles.optionDescription, { color: colors.textSecondary }]}>
-                            Mevcut fotoğraflardan seçin
+                            {t('galleryDescription')}
                         </ThemedText>
                         <View style={[styles.permissionBadge, {
                             backgroundColor: permissions.mediaLibrary === 'granted' ? colors.success + '20' : colors.warning + '20'
@@ -269,7 +273,7 @@ export default function PhotoScreen() {
                             <ThemedText style={[styles.permissionText, {
                                 color: permissions.mediaLibrary === 'granted' ? colors.success : colors.warning
                             }]}>
-                                {permissions.mediaLibrary === 'granted' ? 'İzin verildi' : 'İzin gerekli'}
+                                {permissions.mediaLibrary === 'granted' ? t('permissionGranted') : t('permissionRequired')}
                             </ThemedText>
                         </View>
                     </AnimatedTouchable>
@@ -306,17 +310,31 @@ const styles = StyleSheet.create({
         gap: 16,
         justifyContent: 'center',
     },
+    cardWrapper: {
+        flex: 1,
+        maxWidth: CARD_SIZE,
+    },
     optionCard: {
-        width: CARD_SIZE,
-        minHeight: CARD_SIZE + 40,
+        width: '100%',
+        height: CARD_SIZE + 60,
         borderRadius: 24,
         padding: 20,
-        borderWidth: 1,
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.15,
-        shadowRadius: 16,
-        elevation: 8,
+        borderWidth: 1.5,
+        shadowOffset: { width: 0, height: 12 },
+        shadowOpacity: 0.2,
+        shadowRadius: 20,
+        elevation: 12,
         alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+    },
+    iconGlow: {
+        position: 'absolute',
+        top: -30,
+        width: 140,
+        height: 140,
+        borderRadius: 70,
+        opacity: 0.6,
     },
     optionIcon: {
         width: 80,
@@ -325,6 +343,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 16,
+        zIndex: 1,
     },
     optionTitle: {
         fontSize: 18,
@@ -336,6 +355,7 @@ const styles = StyleSheet.create({
         fontSize: 13,
         textAlign: 'center',
         marginBottom: 16,
+        lineHeight: 18,
     },
     permissionBadge: {
         flexDirection: 'row',

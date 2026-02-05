@@ -38,6 +38,15 @@ export const translations = {
         gallery: 'Gallery',
         cameraDescription: 'Capture a new photo',
         galleryDescription: 'Choose from existing photos',
+        permissionGranted: 'Permission granted',
+        permissionRequired: 'Permission required',
+        photoPageTitle: 'Photo',
+        photoPageSubtitle: 'Choose an option to take a photo or select from gallery',
+        videoPageTitle: 'Video',
+        videoPageSubtitle: 'Choose an option to record a video or select from gallery',
+        continueText: 'Continue',
+        selectFrame: 'Select Frame',
+        recording: 'Recording...',
 
         // Video Screen
         recordVideo: 'Record Video',
@@ -74,6 +83,18 @@ export const translations = {
         noImage: 'No image selected',
         apiError: 'API error occurred',
         noApiKey: 'API key not configured',
+
+        // API Key Management
+        apiKeyManagement: 'API Key Management',
+        apiKeyDescription: 'Manage your Moondream API keys',
+        addApiKey: 'Add API Key',
+        apiKeyName: 'Key Name',
+        apiKeyValue: 'API Key',
+        noApiKeys: 'No API keys added',
+        activeKey: 'Active',
+        deleteKey: 'Delete',
+        selectKey: 'Select',
+        apiKeyRequired: 'API key required for analysis',
     },
     tr: {
         // Navbar
@@ -107,6 +128,15 @@ export const translations = {
         gallery: 'Galeri',
         cameraDescription: 'Yeni bir fotoğraf çekin',
         galleryDescription: 'Mevcut fotoğraflardan seçin',
+        permissionGranted: 'İzin verildi',
+        permissionRequired: 'İzin gerekli',
+        photoPageTitle: 'Fotoğraf',
+        photoPageSubtitle: 'Fotoğraf çekmek veya galeriden seçmek için bir seçenek belirleyin',
+        videoPageTitle: 'Video',
+        videoPageSubtitle: 'Video kaydetmek veya galeriden seçmek için bir seçenek belirleyin',
+        continueText: 'Devam Et',
+        selectFrame: 'Kareyi Seç',
+        recording: 'Kayıt yapılıyor...',
 
         // Video Screen
         recordVideo: 'Video Kaydet',
@@ -143,6 +173,18 @@ export const translations = {
         noImage: 'Görsel seçilmedi',
         apiError: 'API hatası oluştu',
         noApiKey: 'API anahtarı yapılandırılmamış',
+
+        // API Key Management
+        apiKeyManagement: 'API Anahtarı Yönetimi',
+        apiKeyDescription: 'Moondream API anahtarlarınızı yönetin',
+        addApiKey: 'API Anahtarı Ekle',
+        apiKeyName: 'Anahtar Adı',
+        apiKeyValue: 'API Anahtarı',
+        noApiKeys: 'API anahtarı eklenmemiş',
+        activeKey: 'Aktif',
+        deleteKey: 'Sil',
+        selectKey: 'Seç',
+        apiKeyRequired: 'Analiz için API anahtarı gerekli',
     },
 } as const;
 

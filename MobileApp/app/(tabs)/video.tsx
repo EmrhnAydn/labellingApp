@@ -5,9 +5,11 @@
 
 import React, { useState, useRef } from 'react';
 import { StyleSheet, View, TouchableOpacity, Dimensions } from 'react-native';
+import { router } from 'expo-router';
 import { CameraView, CameraType } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { Video, ResizeMode } from 'expo-av';
+import * as VideoThumbnails from 'expo-video-thumbnails';
 import Animated, {
     FadeIn,
     FadeInDown,
@@ -22,6 +24,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Colors } from '@/constants/theme';
 import { useTheme } from '@/context/ThemeContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import { Navbar } from '@/components/Navbar';
@@ -38,6 +41,7 @@ type ViewMode = 'selection' | 'camera' | 'preview';
 
 export default function VideoScreen() {
     const { colorScheme, isDark } = useTheme();
+    const { t } = useLanguage();
     const colors = Colors[colorScheme];
     const { permissions, requestCameraPermission, requestMediaLibraryPermission } = usePermissions();
 
@@ -45,6 +49,7 @@ export default function VideoScreen() {
     const [facing, setFacing] = useState<CameraType>('back');
     const [isRecording, setIsRecording] = useState(false);
     const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+    const [currentPosition, setCurrentPosition] = useState(0);
     const cameraRef = useRef<CameraView>(null);
 
     // Animation values
@@ -128,6 +133,19 @@ export default function VideoScreen() {
         setSelectedVideo(null);
     };
 
+    const handleSelectFrame = async () => {
+        if (selectedVideo) {
+            try {
+                const { uri } = await VideoThumbnails.getThumbnailAsync(selectedVideo, {
+                    time: currentPosition,
+                });
+                router.push({ pathname: '/(tabs)/analysis', params: { imageUri: uri } });
+            } catch (e) {
+                console.warn(e);
+            }
+        }
+    };
+
     const cameraAnimatedStyle = useAnimatedStyle(() => ({
         transform: [{ scale: cameraScale.value }],
     }));
@@ -169,7 +187,7 @@ export default function VideoScreen() {
                         {isRecording && (
                             <Animated.View entering={FadeIn.duration(300)} style={styles.recordingIndicator}>
                                 <View style={styles.recordingDot} />
-                                <ThemedText style={styles.recordingText}>Kayıt yapılıyor...</ThemedText>
+                                <ThemedText style={styles.recordingText}>{t('recording')}</ThemedText>
                             </Animated.View>
                         )}
 
@@ -204,6 +222,11 @@ export default function VideoScreen() {
                             useNativeControls
                             resizeMode={ResizeMode.CONTAIN}
                             isLooping
+                            onPlaybackStatusUpdate={(status) => {
+                                if (status.isLoaded) {
+                                    setCurrentPosition(status.positionMillis);
+                                }
+                            }}
                         />
                         <Animated.View entering={FadeInUp.delay(300).duration(400)} style={styles.previewActions}>
                             <TouchableOpacity
@@ -211,14 +234,14 @@ export default function VideoScreen() {
                                 onPress={handleBack}
                             >
                                 <IconSymbol name="trash.fill" size={20} color="#FFFFFF" />
-                                <ThemedText style={styles.previewButtonText}>İptal</ThemedText>
+                                <ThemedText style={styles.previewButtonText}>{t('cancel')}</ThemedText>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={[styles.previewButton, { backgroundColor: colors.success }]}
-                                onPress={() => {/* TODO: Process video */ }}
+                                onPress={handleSelectFrame}
                             >
-                                <IconSymbol name="checkmark" size={20} color="#FFFFFF" />
-                                <ThemedText style={styles.previewButtonText}>Devam Et</ThemedText>
+                                <IconSymbol name="camera.viewfinder" size={20} color="#FFFFFF" />
+                                <ThemedText style={styles.previewButtonText}>{t('selectFrame')}</ThemedText>
                             </TouchableOpacity>
                         </Animated.View>
                     </View>
@@ -235,37 +258,38 @@ export default function VideoScreen() {
             {/* Title Section */}
             <Animated.View entering={FadeInDown.delay(200).duration(500)} style={styles.titleSection}>
                 <ThemedText type="title" style={styles.pageTitle}>
-                    Video
+                    {t('videoPageTitle')}
                 </ThemedText>
                 <ThemedText style={[styles.pageSubtitle, { color: colors.textSecondary }]}>
-                    Video kaydetmek veya galeriden seçmek için bir seçenek belirleyin
+                    {t('videoPageSubtitle')}
                 </ThemedText>
             </Animated.View>
 
             {/* Options Cards */}
             <View style={styles.cardsContainer}>
                 {/* Camera Card */}
-                <Animated.View entering={FadeInUp.delay(400).duration(500)} style={cameraAnimatedStyle}>
+                <Animated.View entering={FadeInUp.delay(400).duration(500)} style={[cameraAnimatedStyle, styles.cardWrapper]}>
                     <AnimatedTouchable
                         style={[
                             styles.optionCard,
                             {
-                                backgroundColor: colors.card,
-                                borderColor: colors.border,
-                                shadowColor: colors.shadow,
+                                backgroundColor: isDark ? colors.card : '#FFFFFF',
+                                borderColor: isDark ? colors.border : colors.error + '30',
+                                shadowColor: colors.error,
                             },
                         ]}
                         onPress={handleCameraPress}
                         activeOpacity={0.9}
                     >
+                        <View style={[styles.iconGlow, { backgroundColor: colors.error + '15' }]} />
                         <View style={[styles.optionIcon, { backgroundColor: colors.error + '20' }]}>
                             <CustomIcon name="video" size={40} color={colors.error} />
                         </View>
                         <ThemedText type="subtitle" style={styles.optionTitle}>
-                            Kamera
+                            {t('videoCamera')}
                         </ThemedText>
                         <ThemedText style={[styles.optionDescription, { color: colors.textSecondary }]}>
-                            Yeni video kaydedin
+                            {t('videoCameraDescription')}
                         </ThemedText>
                         <View style={[styles.permissionBadge, {
                             backgroundColor: permissions.camera === 'granted' ? colors.success + '20' : colors.warning + '20'
@@ -278,34 +302,35 @@ export default function VideoScreen() {
                             <ThemedText style={[styles.permissionText, {
                                 color: permissions.camera === 'granted' ? colors.success : colors.warning
                             }]}>
-                                {permissions.camera === 'granted' ? 'İzin verildi' : 'İzin gerekli'}
+                                {permissions.camera === 'granted' ? t('permissionGranted') : t('permissionRequired')}
                             </ThemedText>
                         </View>
                     </AnimatedTouchable>
                 </Animated.View>
 
                 {/* Gallery Card */}
-                <Animated.View entering={FadeInUp.delay(600).duration(500)} style={galleryAnimatedStyle}>
+                <Animated.View entering={FadeInUp.delay(600).duration(500)} style={[galleryAnimatedStyle, styles.cardWrapper]}>
                     <AnimatedTouchable
                         style={[
                             styles.optionCard,
                             {
-                                backgroundColor: colors.card,
-                                borderColor: colors.border,
-                                shadowColor: colors.shadow,
+                                backgroundColor: isDark ? colors.card : '#FFFFFF',
+                                borderColor: isDark ? colors.border : colors.primary + '30',
+                                shadowColor: colors.primary,
                             },
                         ]}
                         onPress={handleGalleryPress}
                         activeOpacity={0.9}
                     >
+                        <View style={[styles.iconGlow, { backgroundColor: colors.primary + '15' }]} />
                         <View style={[styles.optionIcon, { backgroundColor: colors.primary + '20' }]}>
                             <CustomIcon name="gallery" size={40} color={colors.primary} />
                         </View>
                         <ThemedText type="subtitle" style={styles.optionTitle}>
-                            Galeri
+                            {t('videoGallery')}
                         </ThemedText>
                         <ThemedText style={[styles.optionDescription, { color: colors.textSecondary }]}>
-                            Mevcut videolardan seçin
+                            {t('videoGalleryDescription')}
                         </ThemedText>
                         <View style={[styles.permissionBadge, {
                             backgroundColor: permissions.mediaLibrary === 'granted' ? colors.success + '20' : colors.warning + '20'
@@ -318,7 +343,7 @@ export default function VideoScreen() {
                             <ThemedText style={[styles.permissionText, {
                                 color: permissions.mediaLibrary === 'granted' ? colors.success : colors.warning
                             }]}>
-                                {permissions.mediaLibrary === 'granted' ? 'İzin verildi' : 'İzin gerekli'}
+                                {permissions.mediaLibrary === 'granted' ? t('permissionGranted') : t('permissionRequired')}
                             </ThemedText>
                         </View>
                     </AnimatedTouchable>
@@ -355,17 +380,31 @@ const styles = StyleSheet.create({
         gap: 16,
         justifyContent: 'center',
     },
+    cardWrapper: {
+        flex: 1,
+        maxWidth: CARD_SIZE,
+    },
     optionCard: {
-        width: CARD_SIZE,
-        minHeight: CARD_SIZE + 40,
+        width: '100%',
+        height: CARD_SIZE + 60,
         borderRadius: 24,
         padding: 20,
-        borderWidth: 1,
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.15,
-        shadowRadius: 16,
-        elevation: 8,
+        borderWidth: 1.5,
+        shadowOffset: { width: 0, height: 12 },
+        shadowOpacity: 0.2,
+        shadowRadius: 20,
+        elevation: 12,
         alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+    },
+    iconGlow: {
+        position: 'absolute',
+        top: -30,
+        width: 140,
+        height: 140,
+        borderRadius: 70,
+        opacity: 0.6,
     },
     optionIcon: {
         width: 80,
@@ -374,6 +413,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 16,
+        zIndex: 1,
     },
     optionTitle: {
         fontSize: 18,
@@ -385,6 +425,7 @@ const styles = StyleSheet.create({
         fontSize: 13,
         textAlign: 'center',
         marginBottom: 16,
+        lineHeight: 18,
     },
     permissionBadge: {
         flexDirection: 'row',

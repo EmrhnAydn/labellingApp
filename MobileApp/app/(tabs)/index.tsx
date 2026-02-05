@@ -3,8 +3,8 @@
  * Modern home page with Photo and Video selection cards
  */
 
-import React from 'react';
-import { StyleSheet, View, Dimensions } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Dimensions, TouchableOpacity, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import Animated, {
   FadeInDown,
@@ -19,12 +19,13 @@ import Animated, {
 import { Colors } from '@/constants/theme';
 import { useTheme } from '@/context/ThemeContext';
 import { useLanguage } from '@/context/LanguageContext';
+import { useApiKey } from '@/context/ApiKeyContext';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
 import { Navbar } from '@/components/Navbar';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { CustomIcon } from '@/components/CustomIcon';
-import { TouchableOpacity } from 'react-native';
+import { ApiKeyModal } from '@/components/ApiKeyModal';
 
 const { width } = Dimensions.get('window');
 const CARD_SIZE = (width - 60) / 2; // Equal width and height for square-ish cards
@@ -34,7 +35,11 @@ const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 export default function HomeScreen() {
   const { colorScheme, isDark } = useTheme();
   const { t } = useLanguage();
+  const { activeKey, apiKeys } = useApiKey();
   const colors = Colors[colorScheme];
+
+  // Modal state
+  const [isApiKeyModalVisible, setIsApiKeyModalVisible] = useState(false);
 
   // Animation values for cards
   const photoScale = useSharedValue(1);
@@ -168,6 +173,37 @@ export default function HomeScreen() {
         </Animated.View>
       </View>
 
+      {/* API Key Management Card */}
+      <Animated.View entering={FadeInUp.delay(800).duration(600)}>
+        <TouchableOpacity
+          style={[
+            styles.apiKeyCard,
+            {
+              backgroundColor: colors.card,
+              borderColor: activeKey ? colors.success : colors.warning,
+              shadowColor: colors.shadow,
+            },
+          ]}
+          onPress={() => setIsApiKeyModalVisible(true)}
+          activeOpacity={0.8}
+        >
+          <View style={[styles.apiKeyIconContainer, { backgroundColor: (activeKey ? colors.success : colors.warning) + '20' }]}>
+            <IconSymbol name="key.fill" size={24} color={activeKey ? colors.success : colors.warning} />
+          </View>
+          <View style={styles.apiKeyContent}>
+            <ThemedText style={styles.apiKeyTitle}>{t('apiKeyManagement')}</ThemedText>
+            <ThemedText style={[styles.apiKeyStatus, { color: colors.textSecondary }]}>
+              {activeKey
+                ? `${apiKeys.length} ${apiKeys.length === 1 ? 'key' : 'keys'} • ${t('activeKey')}`
+                : t('noApiKeys')}
+            </ThemedText>
+          </View>
+          <View style={[styles.apiKeyArrow, { backgroundColor: activeKey ? colors.success : colors.warning }]}>
+            <IconSymbol name="chevron.right" size={14} color="#FFFFFF" />
+          </View>
+        </TouchableOpacity>
+      </Animated.View>
+
       {/* Bottom Info */}
       <Animated.View
         entering={FadeInUp.delay(900).duration(600)}
@@ -178,6 +214,12 @@ export default function HomeScreen() {
           {t('permissionInfo')}
         </ThemedText>
       </Animated.View>
+
+      {/* API Key Modal */}
+      <ApiKeyModal
+        visible={isApiKeyModalVisible}
+        onClose={() => setIsApiKeyModalVisible(false)}
+      />
     </ThemedView>
   );
 }
@@ -258,5 +300,44 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 13,
     flex: 1,
+  },
+  apiKeyCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 20,
+    marginTop: 24,
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  apiKeyIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  apiKeyContent: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  apiKeyTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  apiKeyStatus: {
+    fontSize: 13,
+    marginTop: 2,
+  },
+  apiKeyArrow: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
