@@ -15,6 +15,7 @@ import {
     ActivityIndicator,
     KeyboardAvoidingView,
     Platform,
+    Alert,
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import Animated, {
@@ -39,6 +40,7 @@ import MoondreamApi, {
     Region,
     Point as PointType,
 } from '@/services/moondreamApi';
+import { createCutoutWithBbox } from '@/services/ImageProcessor';
 
 const { width } = Dimensions.get('window');
 const IMAGE_WIDTH = width - 40;
@@ -67,6 +69,7 @@ export default function AnalysisScreen() {
     const [captionLength, setCaptionLength] = useState<CaptionLength>('normal');
     const [imageDimensions, setImageDimensions] = useState({ width: IMAGE_WIDTH, height: IMAGE_HEIGHT });
     const [imageAspectRatio, setImageAspectRatio] = useState(1);
+    const [isProcessingCutout, setIsProcessingCutout] = useState(false);
 
     // Get image dimensions for overlay calculations
     useEffect(() => {
@@ -183,6 +186,36 @@ export default function AnalysisScreen() {
         }
     }, [selectedMode, imageUri, inputText, captionLength, t]);
 
+    // Handle creating cutout and navigating to editor
+    const handleCreateCutout = useCallback(async () => {
+        if (!imageUri || !result.segment) {
+            return;
+        }
+
+        setIsProcessingCutout(true);
+        try {
+            const cutoutUri = await createCutoutWithBbox(
+                imageUri,
+                result.segment.path,
+                result.segment.bbox
+            );
+
+            router.push({
+                pathname: '/editor',
+                params: { cutoutUri, originalImageUri: imageUri },
+            });
+        } catch (err) {
+            const message = err instanceof Error ? err.message : (t('processingError' as any) || 'Failed to process cutout');
+            Alert.alert(
+                t('error' as any) || 'Error',
+                message,
+                [{ text: t('ok' as any) || 'OK' }]
+            );
+        } finally {
+            setIsProcessingCutout(false);
+        }
+    }, [imageUri, result.segment, t]);
+
     const renderInputArea = () => {
         if (selectedMode === 'caption') {
             return (
@@ -298,11 +331,42 @@ export default function AnalysisScreen() {
 
         if (result.segment) {
             return (
-                <Animated.View entering={FadeInDown.duration(300)} style={[styles.resultCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                    <IconSymbol name="scissors" size={20} color={colors.success} />
-                    <ThemedText style={[styles.resultText, { color: colors.text }]}>
-                        {t('segmentComplete' as any) || 'Segmentation complete'}
-                    </ThemedText>
+                <Animated.View entering={FadeInDown.duration(300)}>
+                    <View style={[styles.resultCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                        <IconSymbol name="scissors" size={20} color={colors.success} />
+                        <ThemedText style={[styles.resultText, { color: colors.text }]}>
+                            {t('segmentComplete' as any) || 'Segmentation complete'}
+                        </ThemedText>
+                    </View>
+
+                    {/* Create Sticker & Edit Button */}
+                    <TouchableOpacity
+                        style={[
+                            styles.stickerButton,
+                            {
+                                backgroundColor: isProcessingCutout ? colors.textSecondary : colors.success,
+                            },
+                        ]}
+                        onPress={handleCreateCutout}
+                        disabled={isProcessingCutout || isLoading}
+                        activeOpacity={0.8}
+                    >
+                        {isProcessingCutout ? (
+                            <>
+                                <ActivityIndicator color="#FFFFFF" size="small" />
+                                <ThemedText style={styles.stickerButtonText}>
+                                    {t('processingCutout' as any) || 'Processing cutout...'}
+                                </ThemedText>
+                            </>
+                        ) : (
+                            <>
+                                <ThemedText style={styles.stickerButtonEmoji}>✂️</ThemedText>
+                                <ThemedText style={styles.stickerButtonText}>
+                                    {t('createStickerEdit' as any) || 'Create Sticker & Edit'}
+                                </ThemedText>
+                            </>
+                        )}
+                    </TouchableOpacity>
                 </Animated.View>
             );
         }
@@ -579,5 +643,23 @@ const styles = StyleSheet.create({
     backButtonText: {
         fontSize: 15,
         fontWeight: '600',
+    },
+    stickerButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 10,
+        marginHorizontal: 20,
+        marginTop: 12,
+        paddingVertical: 16,
+        borderRadius: 16,
+    },
+    stickerButtonText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontWeight: '700',
+    },
+    stickerButtonEmoji: {
+        fontSize: 18,
     },
 });

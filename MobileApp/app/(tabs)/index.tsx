@@ -173,6 +173,35 @@ export default function HomeScreen() {
         </Animated.View>
       </View>
 
+      {/* Editor Card - Full width */}
+      <Animated.View entering={FadeInUp.delay(750).duration(600)}>
+        <TouchableOpacity
+          style={[
+            styles.editorCard,
+            {
+              backgroundColor: colors.card,
+              borderColor: colors.warning,
+              shadowColor: colors.shadow,
+            },
+          ]}
+          onPress={() => router.push('/editor')}
+          activeOpacity={0.8}
+        >
+          <View style={[styles.editorIconContainer, { backgroundColor: colors.warning + '20' }]}>
+            <IconSymbol name="wand.and.stars" size={28} color={colors.warning} />
+          </View>
+          <View style={styles.editorContent}>
+            <ThemedText style={styles.editorTitle}>{t('editorCard' as any) || 'Editor'}</ThemedText>
+            <ThemedText style={[styles.editorDescription, { color: colors.textSecondary }]}>
+              {t('editorCardDescription' as any) || 'Create compositions with objects'}
+            </ThemedText>
+          </View>
+          <View style={[styles.editorArrow, { backgroundColor: colors.warning }]}>
+            <IconSymbol name="arrow.right" size={14} color="#FFFFFF" />
+          </View>
+        </TouchableOpacity>
+      </Animated.View>
+
       {/* API Key Management Card */}
       <Animated.View entering={FadeInUp.delay(800).duration(600)}>
         <TouchableOpacity
@@ -334,6 +363,45 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   apiKeyArrow: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  editorCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 20,
+    marginTop: 16,
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  editorIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  editorContent: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  editorTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  editorDescription: {
+    fontSize: 13,
+    marginTop: 2,
+  },
+  editorArrow: {
     width: 28,
     height: 28,
     borderRadius: 14,

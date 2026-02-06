@@ -101,6 +101,69 @@ export const translations = {
         developerInfo: 'Developer Information',
         portfolio: 'Portfolio',
         githubProfile: 'GitHub Profile',
+
+        // Editor Screen
+        editorTitle: 'Editor',
+        backgroundWhite: 'White',
+        backgroundBlack: 'Black',
+        backgroundTransparent: 'Transparent',
+        changeBackground: 'Change Background',
+        resetPosition: 'Reset',
+        processingCutout: 'Processing cutout...',
+        createStickerEdit: 'Create Sticker & Edit',
+        processingError: 'Failed to process cutout',
+        error: 'Error',
+        ok: 'OK',
+
+        // Save & Gestures
+        saveProject: 'Save Project',
+        saving: 'Saving...',
+        saveSuccess: 'Project Saved! 🎉',
+        savedTo: 'Saved to',
+        saveError: 'Failed to save project. Please try again.',
+        goHome: 'Go Home',
+        continueEditing: 'Continue Editing',
+        dragToMove: 'Drag to move',
+        pinchToResize: 'Pinch to resize',
+        rotateGesture: 'Rotate',
+
+        // Editor Enhancements
+        pageSize: 'Canvas Size',
+        pageSizeSmall: 'Small',
+        pageSizeMedium: 'Medium',
+        pageSizeLarge: 'Large',
+        backgroundBlueScreen: 'Blue Screen',
+        backgroundGreenScreen: 'Green Screen',
+        addFromGallery: 'Add Image',
+        addPreviousObjects: 'Add Object',
+        noSavedObjects: 'No saved objects',
+        objectSaved: 'Object Saved! 🎨',
+        objectSaveError: 'Failed to save object',
+        saveAsObject: 'Save as Object',
+        selectBackground: 'Background',
+        editorCard: 'Editor',
+        editorCardDescription: 'Create compositions with objects',
+
+        // Layer Controls
+        layerControls: 'Layer Controls',
+        deleteLayer: 'Delete',
+        bringForward: 'Forward',
+        sendBackward: 'Backward',
+        noActiveLayer: 'No active layer',
+        layerDeleted: 'Layer deleted',
+
+        // Background Image
+        backgroundImage: 'Image',
+        selectBackgroundImage: 'Select Background Image',
+        removeBackground: 'Remove',
+
+        // Custom Canvas Size
+        customSize: 'Custom',
+        width: 'Width',
+        height: 'Height',
+        apply: 'Apply',
+        invalidSize: 'Invalid size',
+        sizeRange: 'Size must be between 100-800',
     },
     tr: {
         // Navbar
@@ -197,6 +260,69 @@ export const translations = {
         developerInfo: 'Geliştirici Bilgisi',
         portfolio: 'Portfolyo',
         githubProfile: 'GitHub Profili',
+
+        // Editor Screen
+        editorTitle: 'Editör',
+        backgroundWhite: 'Beyaz',
+        backgroundBlack: 'Siyah',
+        backgroundTransparent: 'Şeffaf',
+        changeBackground: 'Arka Plan Değiştir',
+        resetPosition: 'Sıfırla',
+        processingCutout: 'Kesim işleniyor...',
+        createStickerEdit: 'Çıkartma Oluştur & Düzenle',
+        processingError: 'Kesim işlenemedi',
+        error: 'Hata',
+        ok: 'Tamam',
+
+        // Save & Gestures
+        saveProject: 'Projeyi Kaydet',
+        saving: 'Kaydediliyor...',
+        saveSuccess: 'Proje Kaydedildi! 🎉',
+        savedTo: 'Kaydedildi',
+        saveError: 'Proje kaydedilemedi. Lütfen tekrar deneyin.',
+        goHome: 'Ana Sayfaya Git',
+        continueEditing: 'Düzenlemeye Devam Et',
+        dragToMove: 'Sürükle',
+        pinchToResize: 'Yakınlaştır',
+        rotateGesture: 'Döndür',
+
+        // Editor Enhancements
+        pageSize: 'Tuval Boyutu',
+        pageSizeSmall: 'Küçük',
+        pageSizeMedium: 'Orta',
+        pageSizeLarge: 'Büyük',
+        backgroundBlueScreen: 'Mavi Perde',
+        backgroundGreenScreen: 'Yeşil Perde',
+        addFromGallery: 'Resim Ekle',
+        addPreviousObjects: 'Obje Ekle',
+        noSavedObjects: 'Kayıtlı obje yok',
+        objectSaved: 'Obje Kaydedildi! 🎨',
+        objectSaveError: 'Obje kaydedilemedi',
+        saveAsObject: 'Obje Olarak Kaydet',
+        selectBackground: 'Arka Plan',
+        editorCard: 'Editör',
+        editorCardDescription: 'Objelerle kompozisyon oluştur',
+
+        // Layer Controls
+        layerControls: 'Katman Kontrolleri',
+        deleteLayer: 'Sil',
+        bringForward: 'Öne',
+        sendBackward: 'Arkaya',
+        noActiveLayer: 'Aktif katman yok',
+        layerDeleted: 'Katman silindi',
+
+        // Background Image
+        backgroundImage: 'Resim',
+        selectBackgroundImage: 'Arka Plan Resmi Seç',
+        removeBackground: 'Kaldır',
+
+        // Custom Canvas Size
+        customSize: 'Özel',
+        width: 'Genişlik',
+        height: 'Yükseklik',
+        apply: 'Uygula',
+        invalidSize: 'Geçersiz boyut',
+        sizeRange: 'Boyut 100-800 arasında olmalı',
     },
 } as const;
 
