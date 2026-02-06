@@ -138,14 +138,15 @@ async function apiRequest<T>(
  */
 export async function caption(
     imageUri: string,
-    length: CaptionLength = 'normal'
+    length: CaptionLength = 'normal',
+    customApiKey?: string
 ): Promise<CaptionResponse> {
     const imageBase64 = await imageToBase64(imageUri);
 
     return apiRequest<CaptionResponse>('/caption', {
         image_url: imageBase64,
         length,
-    });
+    }, customApiKey);
 }
 
 /**
@@ -156,14 +157,15 @@ export async function caption(
  */
 export async function query(
     imageUri: string,
-    question: string
+    question: string,
+    customApiKey?: string
 ): Promise<QueryResponse> {
     const imageBase64 = await imageToBase64(imageUri);
 
     return apiRequest<QueryResponse>('/query', {
         image_url: imageBase64,
         question,
-    });
+    }, customApiKey);
 }
 
 /**
@@ -174,14 +176,15 @@ export async function query(
  */
 export async function detect(
     imageUri: string,
-    object: string
+    object: string,
+    customApiKey?: string
 ): Promise<DetectResponse> {
     const imageBase64 = await imageToBase64(imageUri);
 
     return apiRequest<DetectResponse>('/detect', {
         image_url: imageBase64,
         object,
-    });
+    }, customApiKey);
 }
 
 /**
@@ -192,14 +195,15 @@ export async function detect(
  */
 export async function point(
     imageUri: string,
-    object: string
+    object: string,
+    customApiKey?: string
 ): Promise<PointResponse> {
     const imageBase64 = await imageToBase64(imageUri);
 
     return apiRequest<PointResponse>('/point', {
         image_url: imageBase64,
         object,
-    });
+    }, customApiKey);
 }
 
 /**
@@ -210,14 +214,15 @@ export async function point(
  */
 export async function segment(
     imageUri: string,
-    object: string
+    object: string,
+    customApiKey?: string
 ): Promise<SegmentResponse> {
     const imageBase64 = await imageToBase64(imageUri);
 
     return apiRequest<SegmentResponse>('/segment', {
         image_url: imageBase64,
         object,
-    });
+    }, customApiKey);
 }
 
 // =============================================================================

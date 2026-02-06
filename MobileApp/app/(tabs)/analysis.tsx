@@ -41,6 +41,7 @@ import MoondreamApi, {
     Point as PointType,
 } from '@/services/moondreamApi';
 import { createCutoutWithBbox } from '@/services/ImageProcessor';
+import { useApiKey } from '@/context/ApiKeyContext';
 
 const { width } = Dimensions.get('window');
 const IMAGE_WIDTH = width - 40;
@@ -58,6 +59,7 @@ export default function AnalysisScreen() {
     const { imageUri } = useLocalSearchParams<{ imageUri: string }>();
     const { colorScheme } = useTheme();
     const { t } = useLanguage();
+    const { activeKey } = useApiKey();
     const colors = Colors[colorScheme];
 
     // State
@@ -131,9 +133,16 @@ export default function AnalysisScreen() {
         setError(null);
 
         try {
+            // Check if API key is configured
+            if (!activeKey) {
+                setError(t('noApiKey' as any) || 'No API key configured. Please add an API key in the settings.');
+                setIsLoading(false);
+                return;
+            }
+
             switch (selectedMode) {
                 case 'caption': {
-                    const response = await MoondreamApi.caption(imageUri, captionLength);
+                    const response = await MoondreamApi.caption(imageUri, captionLength, activeKey);
                     setResult({ caption: response.caption });
                     break;
                 }
@@ -143,7 +152,7 @@ export default function AnalysisScreen() {
                         setIsLoading(false);
                         return;
                     }
-                    const response = await MoondreamApi.query(imageUri, inputText.trim());
+                    const response = await MoondreamApi.query(imageUri, inputText.trim(), activeKey);
                     setResult({ answer: response.answer });
                     break;
                 }
@@ -153,7 +162,7 @@ export default function AnalysisScreen() {
                         setIsLoading(false);
                         return;
                     }
-                    const response = await MoondreamApi.detect(imageUri, inputText.trim());
+                    const response = await MoondreamApi.detect(imageUri, inputText.trim(), activeKey);
                     setResult({ objects: response.objects });
                     break;
                 }
@@ -163,7 +172,7 @@ export default function AnalysisScreen() {
                         setIsLoading(false);
                         return;
                     }
-                    const response = await MoondreamApi.point(imageUri, inputText.trim());
+                    const response = await MoondreamApi.point(imageUri, inputText.trim(), activeKey);
                     setResult({ points: response.points });
                     break;
                 }
@@ -173,7 +182,7 @@ export default function AnalysisScreen() {
                         setIsLoading(false);
                         return;
                     }
-                    const response = await MoondreamApi.segment(imageUri, inputText.trim());
+                    const response = await MoondreamApi.segment(imageUri, inputText.trim(), activeKey);
                     setResult({ segment: { path: response.path, bbox: response.bbox } });
                     break;
                 }
@@ -184,7 +193,7 @@ export default function AnalysisScreen() {
         } finally {
             setIsLoading(false);
         }
-    }, [selectedMode, imageUri, inputText, captionLength, t]);
+    }, [selectedMode, imageUri, inputText, captionLength, t, activeKey]);
 
     // Handle creating cutout and navigating to editor
     const handleCreateCutout = useCallback(async () => {
