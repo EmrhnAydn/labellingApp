@@ -8,7 +8,7 @@ This project is a comprehensive mobile image processing, labeling, and analysis 
 
 Want to try the app immediately without building it? You can download the latest Android build directly from the link below:
 
-👉 **[Download Android App Bundle (.aab)](https://expo.dev/artifacts/eas/boRBJy4m6TmgyMASrDNubC.aab)**
+👉 **[Download Android App Bundle (.aab)](https://expo.dev/accounts/byrkhns-organization/projects/labellingapp/builds/206a2fbf-e959-45db-8536-59a1f9cf6fa3)**
 
 > *Note: This is an `.aab` file intended for distribution. To install it on a device, you may need to use bundletool or deploy it via the Google Play Console internal track.*
 
